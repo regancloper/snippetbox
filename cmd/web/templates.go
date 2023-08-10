@@ -15,10 +15,12 @@ import (
 // Also include a Snippets field in the templateData struct to
 // hold a slice of snippets (i.e. for home page).
 // Also add a CurrentYear field to the templateData struct.
+// Also add a Form field with the type "any".
 type templateData struct {
 	CurrentYear int
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
+	Form        any
 }
 
 // Create a humanDate function which returns a nicely formatted string
