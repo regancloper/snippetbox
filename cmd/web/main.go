@@ -15,6 +15,7 @@ import (
 	// used, you can find it at the top of the go.mod file.
 	"snippetbox.reganloper.com/internal/models"
 
+	"github.com/go-playground/form/v4"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -24,11 +25,13 @@ import (
 // Also add a snippets field to the application struct. This will allow us to
 // make the SnippetModel object available to our handlers.
 // Also add a templateCache field to the application struct.
+// Also add a formDecoder field to hold a pointer to a form.Decoder instance.
 type application struct {
 	errorLog      *log.Logger
 	infoLog       *log.Logger
 	snippets      *models.SnippetModel
 	templateCache map[string]*template.Template
+	formDecoder   *form.Decoder
 }
 
 func main() {
@@ -76,16 +79,21 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
+	// Initialize a decoder instance...
+	formDecoder := form.NewDecoder()
+
 	// Initialize a new instance of our application struct, containing the
 	// dependencies.
 	// Also initialize a models.SnippetModel instance and add it to the application
 	// dependencies.
 	// Also add template cache to the application dependencies.
+	// Also add formDecoder to the application dependencies.
 	app := &application{
 		errorLog:      errorLog,
 		infoLog:       infoLog,
 		snippets:      &models.SnippetModel{DB: db},
 		templateCache: templateCache,
+		formDecoder:   formDecoder,
 	}
 
 	// Initialize a new http.Server struct. We set the Addr and Handler fields so
