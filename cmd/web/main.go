@@ -29,6 +29,7 @@ import (
 // make the SnippetModel object available to our handlers.
 // Also add a templateCache field to the application struct.
 // Also add a formDecoder field to hold a pointer to a form.Decoder instance.
+// Also add a new sessionManager field to the application struct.
 type application struct {
 	errorLog       *log.Logger
 	infoLog        *log.Logger
