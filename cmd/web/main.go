@@ -31,10 +31,12 @@ import (
 // Also add a templateCache field to the application struct.
 // Also add a formDecoder field to hold a pointer to a form.Decoder instance.
 // Also add a new sessionManager field to the application struct.
+// Also add a new users field to the application struct.
 type application struct {
 	errorLog       *log.Logger
 	infoLog        *log.Logger
 	snippets       *models.SnippetModel
+	users          *models.UserModel
 	templateCache  map[string]*template.Template
 	formDecoder    *form.Decoder
 	sessionManager *scs.SessionManager
@@ -108,10 +110,13 @@ func main() {
 	// Also add template cache to the application dependencies.
 	// Also add formDecoder to the application dependencies.
 	// And add the session manager to our application dependencies.
+	// And nitialize a models.UserModel instance and add it to the application
+	// dependencies.
 	app := &application{
 		errorLog:       errorLog,
 		infoLog:        infoLog,
 		snippets:       &models.SnippetModel{DB: db},
+		users:          &models.UserModel{DB: db},
 		templateCache:  templateCache,
 		formDecoder:    formDecoder,
 		sessionManager: sessionManager,
