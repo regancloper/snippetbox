@@ -17,11 +17,12 @@ import (
 // Also add a CurrentYear field to the templateData struct.
 // Also add a Form field with the type "any".
 type templateData struct {
-	CurrentYear int
-	Snippet     *models.Snippet
-	Snippets    []*models.Snippet
-	Form        any
-	Flash       string
+	CurrentYear     int
+	Snippet         *models.Snippet
+	Snippets        []*models.Snippet
+	Form            any
+	Flash           string
+	IsAuthenticated bool // Add an IsAuthenticated field to the templateData struct.
 }
 
 // Create a humanDate function which returns a nicely formatted string
