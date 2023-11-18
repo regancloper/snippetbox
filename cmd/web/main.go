@@ -33,6 +33,7 @@ import (
 // Also add a new sessionManager field to the application struct.
 // Also add a new users field to the application struct.
 type application struct {
+	debug          bool // Add a new debug field.
 	errorLog       *log.Logger
 	infoLog        *log.Logger
 	snippets       models.SnippetModelInterface // Use our new interface type.
@@ -49,6 +50,8 @@ func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
 	// Define a new command-line flag for the MySQL DSN string.
 	dsn := flag.String("dsn", "web:password1@/snippetbox?parseTime=true", "MySQL data source name")
+	// Create a new debug flag with the default value of false.
+	debug := flag.Bool("debug", false, "Enable debug mode")
 
 	// Importantly, we use the flag.Parse() function to parse the command-line flag.
 	// This reads in the command-line flag value and assigns it to the addr
@@ -110,9 +113,10 @@ func main() {
 	// Also add template cache to the application dependencies.
 	// Also add formDecoder to the application dependencies.
 	// And add the session manager to our application dependencies.
-	// And nitialize a models.UserModel instance and add it to the application
+	// And initialize a models.UserModel instance and add it to the application
 	// dependencies.
 	app := &application{
+		debug:          *debug, // Add the debug flag value to the application struct.
 		errorLog:       errorLog,
 		infoLog:        infoLog,
 		snippets:       &models.SnippetModel{DB: db},
@@ -154,6 +158,9 @@ func main() {
 	// log.Printf() function to interpolate the address with the log message.
 	// Write messages using the two new loggers, instead of the standard logger.
 	infoLog.Printf("Starting server on %s", *addr)
+	if *debug {
+		infoLog.Print("Debug mode is enabled")
+	}
 	// Because the err variable is now already declared in the code above, we need
 	// to use the assignment operator = here, instead of the := 'declare and assign'
 	// operator.
