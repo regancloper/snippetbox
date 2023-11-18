@@ -55,6 +55,8 @@ func (app *application) routes() http.Handler {
 	// method returns a http.Handler (rather than a http.HandlerFunc) we also
 	// need to switch to registering the route using the router.Handler() method.
 	router.Handler(http.MethodGet, "/", dynamic.ThenFunc(app.home))
+	// Add the about route.
+	router.Handler(http.MethodGet, "/about", dynamic.ThenFunc(app.about))
 	router.Handler(http.MethodGet, "/snippet/view/:id", dynamic.ThenFunc(app.snippetView))
 	router.Handler(http.MethodGet, "/user/signup", dynamic.ThenFunc(app.userSignup))
 	router.Handler(http.MethodPost, "/user/signup", dynamic.ThenFunc(app.userSignupPost))
