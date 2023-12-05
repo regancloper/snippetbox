@@ -15,6 +15,7 @@ type UserModelInterface interface {
 	Authenticate(email, password string) (int, error)
 	Exists(id int) (bool, error)
 	Get(id int) (*User, error)
+	PasswordUpdate(id int, currentPassword, newPassword string) error
 }
 
 // Define a new User type. Notice how the field names and types align
@@ -126,4 +127,40 @@ func (m *UserModel) Get(id int) (*User, error) {
 
 	// If everything went OK then return the User object.
 	return &user, nil
+}
+
+func (m *UserModel) PasswordUpdate(id int, currentPassword, newPassword string) error {
+	// Retrieve the hashed password associated with the given id. If
+	// no matching id exists we return the ErrInvalidCredentials error.
+	var currentHashedPassword []byte
+
+	stmt := "SELECT hashed_password FROM users WHERE id = ?"
+
+	err := m.DB.QueryRow(stmt, id).Scan(&currentHashedPassword)
+	if err != nil {
+		return err
+	}
+
+	// Check whether the hashed password and plain-text current password provided match.
+	// If they don't, we return the ErrInvalidCredentials error.
+	err = bcrypt.CompareHashAndPassword(currentHashedPassword, []byte(currentPassword))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			return ErrInvalidCredentials
+		} else {
+			return err
+		}
+	}
+
+	// Create a bcrypt hash of the plain-text newPassword.
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), 12)
+	if err != nil {
+		return err
+	}
+
+	stmt = "UPDATE users SET hashed_password = ? WHERE id = ?"
+
+	// Use the Exec() method to update the user's hashed password
+	_, err = m.DB.Exec(stmt, string(newHashedPassword), id)
+	return err
 }
